@@ -138,4 +138,4 @@ Estructuración de una página con HTML, CSS y JS combinados
 
 ✏️ Autor
 
-Proyecto desarrollado por Juan David como práctica de programación web.
+Proyecto desarrollado por Juan David  y Wilmer Alexander Sepúlveda Manrique, como práctica de programación web.
