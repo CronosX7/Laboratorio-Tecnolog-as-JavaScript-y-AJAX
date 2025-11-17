@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio JavaScript y AJAX</title>
+    <style>
+        /* ESTILOS GENERALES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #bdbdbd 0%, #8c8c8c 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: black;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* SECCIONES PRINCIPALES */
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            color: black;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        /* EJERCICIOS */
+        .ejercicio {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #667eea;
+        }
+
+        .ejercicio h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* INPUTS Y BUTTONS */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #bfbfbf 0%, #8f8f8f 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(80, 80, 80, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* RESULTADO */
+        .resultado {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            min-height: 50px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .resultado.error {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        /* AJAX SPECIFIC STYLES */
+        .ajax-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .ajax-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .ajax-box h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ajax-box pre {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .estado.no-iniciada {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .estado.cargando {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .estado.completada {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .estado.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>🔬 Laboratorio de JavaScript y AJAX</h1>
+            <p>Prácticas de Programación Web - Desarrollo de Aplicaciones en Red</p>
+        </header>
+
+        <!-- SECCIÓN JAVASCRIPT -->
+        <div class="section">
+            <h2>📝 Ejercicios JavaScript</h2>
+
+            <!-- EJERCICIO 1: PALÍNDROMO -->
+            <div class="ejercicio">
+                <h3>1. Detector de Palíndromos</h3>
+                <p>Introduce una palabra o frase para verificar si es un palíndromo:</p>
+                <input type="text" id="inputPalindromo" placeholder="Ejemplo: anilina, reconocer">
+                <button onclick="verificarPalindromo()">Verificar Palíndromo</button>
+                <div id="resultadoPalindromo" class="resultado" style="display:none;"></div>
+            </div>
+
+            <!-- EJERCICIO 2: MAYOR DE DOS NÚMEROS -->
+            <div class="ejercicio">
+                <h3>2. Comparar Dos Números</h3>
+                <p>Introduce dos números para saber cuál es mayor:</p>
+                <input type="text" id="num1" placeholder="Primer número">
+                <input type="text" id="num2" placeholder="Segundo número">
+                <button onclick="compararNumeros()">Comparar Números</button>
+                <div id="resultadoNumeros" class="resultado" style="display:none;"></div>
+            </div>
+
+            <!-- EJERCICIO 3: VOCALES EN FRASE -->
+            <div class="ejercicio">
+                <h3>3. Mostrar Vocales de una Frase</h3>
+                <p>Introduce una frase para ver qué vocales aparecen:</p>
+                <input type="text" id="inputVocales" placeholder="Ejemplo: Hola mundo">
+                <button onclick="mostrarVocales()">Mostrar Vocales</button>
+                <div id="resultadoVocales" class="resultado" style="display:none;"></div>
+            </div>
+
+            <!-- EJERCICIO 4: CONTAR VOCALES -->
+            <div class="ejercicio">
+                <h3>4. Contar Vocales en una Frase</h3>
+                <p>Introduce una frase para contar cuántas veces aparece cada vocal:</p>
+                <input type="text" id="inputContarVocales" placeholder="Ejemplo: Programación">
+                <button onclick="contarVocales()">Contar Vocales</button>
+                <div id="resultadoContarVocales" class="resultado" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN AJAX -->
+        <div class="section">
+            <h2>🌐 Ejercicios AJAX</h2>
+
+            <div class="ejercicio">
+                <h3>Petición AJAX - Cargar Contenido de URL</h3>
+                <p>Introduce una URL para cargar su contenido:</p>
+                <input type="text" id="urlInput" placeholder="URL del archivo a cargar">
+                <button onclick="realizarPeticionAJAX()">Mostrar Contenidos</button>
+
+                <div class="ajax-container" style="margin-top: 1.5rem;">
+                    <!-- ESTADO DE LA PETICIÓN -->
+                    <div class="ajax-box">
+                        <h4>📊 Estado de la Petición</h4>
+                        <div id="estadoPeticion">
+                            <span class="estado no-iniciada">No iniciada</span>
+                        </div>
+                    </div>
+
+                    <!-- CÓDIGO DE ESTADO -->
+                    <div class="ajax-box">
+                        <h4>📋 Código de Estado</h4>
+                        <div id="codigoEstado">-</div>
+                    </div>
+
+                    <!-- CABECERAS HTTP -->
+                    <div class="ajax-box">
+                        <h4>📄 Cabeceras HTTP de la Respuesta del Servidor</h4>
+                        <pre id="cabeceras">-</pre>
+                    </div>
+
+                    <!-- CONTENIDOS -->
+                    <div class="ajax-box">
+                        <h4>📝 Contenidos del Archivo</h4>
+                        <pre id="contenidos">-</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // EJERCICIOS JAVASCRIPT
+        // ============================================
+
+        // EJERCICIO 1: Verificar si una cadena es palíndromo
+        function verificarPalindromo() {
+            const input = document.getElementById('inputPalindromo').value;
+            const resultado = document.getElementById('resultadoPalindromo');
+            
+            if (input.trim() === '') {
+                resultado.style.display = 'block';
+                resultado.className = 'resultado error';
+                resultado.textContent = '⚠️ Por favor, introduce una palabra o frase.';
+                return;
+            }
+
+            // Limpiar la cadena: quitar espacios, tildes y convertir a minúsculas
+            const cadenaLimpia = input
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+                .replace(/[^a-z0-9]/g, ''); // Quitar espacios y caracteres especiales
+
+            // Invertir la cadena
+            const cadenaInvertida = cadenaLimpia.split('').reverse().join('');
+
+            // Comparar
+            const esPalindromo = cadenaLimpia === cadenaInvertida;
+
+            resultado.style.display = 'block';
+            resultado.className = 'resultado';
+            
+            if (esPalindromo) {
+                resultado.textContent = `✅ "${input}" SÍ es un palíndromo`;
+            } else {
+                resultado.textContent = `❌ "${input}" NO es un palíndromo`;
+            }
+        }
+
+        // EJERCICIO 2: Comparar dos números
+        function compararNumeros() {
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+            const resultado = document.getElementById('resultadoNumeros');
+
+            // Validar que sean números
+            if (num1 === '' || num2 === '' || isNaN(num1) || isNaN(num2)) {
+                resultado.style.display = 'block';
+                resultado.className = 'resultado error';
+                resultado.textContent = '⚠️ Por favor, introduce dos números válidos.';
+                return;
+            }
+
+            const numero1 = parseFloat(num1);
+            const numero2 = parseFloat(num2);
+
+            resultado.style.display = 'block';
+            resultado.className = 'resultado';
+
+            if (numero1 > numero2) {
+                resultado.textContent = `🏆 El número ${numero1} es MAYOR que ${numero2}`;
+            } else if (numero2 > numero1) {
+                resultado.textContent = `🏆 El número ${numero2} es MAYOR que ${numero1}`;
+            } else {
+                resultado.textContent = `⚖️ Ambos números son IGUALES (${numero1})`;
+            }
+        }
+
+        // EJERCICIO 3: Mostrar vocales que aparecen
+        function mostrarVocales() {
+            const input = document.getElementById('inputVocales').value;
+            const resultado = document.getElementById('resultadoVocales');
+
+            if (input.trim() === '') {
+                resultado.style.display = 'block';
+                resultado.className = 'resultado error';
+                resultado.textContent = '⚠️ Por favor, introduce una frase.';
+                return;
+            }
+
+            const vocales = ['a', 'e', 'i', 'o', 'u'];
+            const vocalesEncontradas = new Set();
+            
+            // Buscar vocales (sin importar mayúsculas/minúsculas)
+            const textoLower = input.toLowerCase();
+            for (let char of textoLower) {
+                if (vocales.includes(char)) {
+                    vocalesEncontradas.add(char);
+                }
+            }
+
+            resultado.style.display = 'block';
+            resultado.className = 'resultado';
+
+            if (vocalesEncontradas.size > 0) {
+                const vocalesArray = Array.from(vocalesEncontradas).sort();
+                resultado.textContent = `✅ Vocales encontradas: ${vocalesArray.join(', ').toUpperCase()}`;
+            } else {
+                resultado.textContent = '❌ No se encontraron vocales en la frase.';
+            }
+        }
+
+        // EJERCICIO 4: Contar cuántas veces aparece cada vocal
+        function contarVocales() {
+            const input = document.getElementById('inputContarVocales').value;
+            const resultado = document.getElementById('resultadoContarVocales');
+
+            if (input.trim() === '') {
+                resultado.style.display = 'block';
+                resultado.className = 'resultado error';
+                resultado.textContent = '⚠️ Por favor, introduce una frase.';
+                return;
+            }
+
+            const conteo = { a: 0, e: 0, i: 0, o: 0, u: 0 };
+            const textoLower = input.toLowerCase();
+
+            // Contar cada vocal
+            for (let char of textoLower) {
+                if (conteo.hasOwnProperty(char)) {
+                    conteo[char]++;
+                }
+            }
+
+            resultado.style.display = 'block';
+            resultado.className = 'resultado';
+
+            const total = Object.values(conteo).reduce((a, b) => a + b, 0);
+            
+            if (total > 0) {
+                let texto = `📊 Conteo de vocales (Total: ${total}):\n\n`;
+                texto += `A: ${conteo.a} | E: ${conteo.e} | I: ${conteo.i} | O: ${conteo.o} | U: ${conteo.u}`;
+                resultado.textContent = texto;
+            } else {
+                resultado.textContent = '❌ No se encontraron vocales en la frase.';
+            }
+        }
+
+        // ============================================
+        // EJERCICIOS AJAX
+        // ============================================
+
+        // Variable global para el objeto XMLHttpRequest
+        let xhr = null;
+
+        // Al cargar la página, mostrar la URL actual por defecto
+        window.onload = function() {
+            document.getElementById('urlInput').value = window.location.href;
+        };
+
+        function realizarPeticionAJAX() {
+            const url = document.getElementById('urlInput').value;
+
+            if (url.trim() === '') {
+                alert('⚠️ Por favor, introduce una URL válida.');
+                return;
+            }
+
+            // Crear objeto XMLHttpRequest
+            xhr = new XMLHttpRequest();
+
+            // Configurar los eventos del ciclo de vida de la petición
+            xhr.onreadystatechange = function() {
+                actualizarEstado();
+            };
+
+            // Abrir la petición
+            try {
+                xhr.open('GET', url, true);
+                xhr.send();
+            } catch (error) {
+                document.getElementById('estadoPeticion').innerHTML = 
+                    '<span class="estado error">Error al realizar la petición</span>';
+                document.getElementById('contenidos').textContent = 
+                    'Error: ' + error.message;
+            }
+        }
+
+        function actualizarEstado() {
+            const estadoDiv = document.getElementById('estadoPeticion');
+            const codigoDiv = document.getElementById('codigoEstado');
+            const cabecerasDiv = document.getElementById('cabeceras');
+            const contenidosDiv = document.getElementById('contenidos');
+
+            // Mostrar el estado de la petición
+            let estadoTexto = '';
+            let claseEstado = '';
+
+            switch(xhr.readyState) {
+                case 0:
+                    estadoTexto = 'No iniciada (readyState: 0)';
+                    claseEstado = 'no-iniciada';
+                    break;
+                case 1:
+                    estadoTexto = 'Conexión establecida (readyState: 1)';
+                    claseEstado = 'cargando';
+                    break;
+                case 2:
+                    estadoTexto = 'Petición recibida (readyState: 2)';
+                    claseEstado = 'cargando';
+                    break;
+                case 3:
+                    estadoTexto = 'Procesando petición (readyState: 3)';
+                    claseEstado = 'cargando';
+                    break;
+                case 4:
+                    estadoTexto = 'Petición completada (readyState: 4)';
+                    claseEstado = 'completada';
+                    break;
+            }
+
+            estadoDiv.innerHTML = `<span class="estado ${claseEstado}">${estadoTexto}</span>`;
+
+            // Si la petición está completa
+            if (xhr.readyState === 4) {
+                // Mostrar código de estado
+                codigoDiv.innerHTML = `<strong>Código:</strong> ${xhr.status} - <strong>Texto:</strong> ${xhr.statusText}`;
+
+                // Mostrar cabeceras
+                const cabeceras = xhr.getAllResponseHeaders();
+                cabecerasDiv.textContent = cabeceras || 'No se pudieron obtener las cabeceras';
+
+                // Mostrar contenido
+                if (xhr.status === 200) {
+                    contenidosDiv.textContent = xhr.responseText;
+                } else {
+                    contenidosDiv.textContent = `Error ${xhr.status}: No se pudo cargar el contenido`;
+                    estadoDiv.innerHTML = '<span class="estado error">Error en la petición</span>';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
